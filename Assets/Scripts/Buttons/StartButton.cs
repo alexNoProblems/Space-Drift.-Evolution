@@ -3,10 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class StartButton : MonoBehaviour
 {
-   private const string Forest1Scene = "Forest1";
+   private const string GameScene = "Game";
    
    public void StartGame()
    {
-      SceneManager.LoadScene(Forest1Scene);
+      SceneManager.LoadScene(GameScene);
    }
 }
