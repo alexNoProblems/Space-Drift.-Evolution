@@ -1,10 +1,11 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputReader : MonoBehaviour
 {
+   [SerializeField] private Joystick _joystick;
+   
    private InputSystem_Actions _inputActions;
 
    public event Action<Vector2> MoveChanged;
@@ -27,6 +28,12 @@ public class InputReader : MonoBehaviour
       _inputActions.Player.Disable();
    }
 
+   private void Update()
+   {
+      if (_joystick != null)
+         ProcessInput(_joystick.Direction);
+   }
+
    private void OnDestroy()
    {
       _inputActions.Player.Move.performed -= OnMovePerformed;
@@ -37,11 +44,23 @@ public class InputReader : MonoBehaviour
 
    private void OnMovePerformed(InputAction.CallbackContext context)
    {
-      MoveChanged?.Invoke(context.ReadValue<Vector2>());
+      ProcessInput(context.ReadValue<Vector2>());
    }
 
    private void OnMoveCanceled(InputAction.CallbackContext context)
    {
       MoveChanged?.Invoke(Vector2.zero);
+   }
+
+   private void ProcessInput(Vector2 input)
+   {
+      if (input.magnitude < 0.2f)
+      {
+         MoveChanged?.Invoke(Vector2.zero);
+         
+         return;
+      }
+      
+      MoveChanged?.Invoke(input.normalized);
    }
 }
